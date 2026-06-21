@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# NLTK data (downloaded locally via scripts/setup_nltk.py)
+nltk_data/
+
+# OS / editor cruft
+.DS_Store
+.vscode/
+.idea/
+
+# Local scratch output (keep sample_files/ tracked, ignore ad-hoc test output)
+*.local.json
