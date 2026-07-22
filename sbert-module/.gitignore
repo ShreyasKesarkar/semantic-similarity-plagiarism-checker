@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Pytest / coverage cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local SBERT Model models cache
+models/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
