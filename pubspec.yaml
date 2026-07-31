@@ -1,0 +1,23 @@
+name: semantic_similarity_plagiarism_checker
+description: A Flutter frontend scaffold for the Semantic Similarity Plagiarism Checker
+publish_to: 'none'
+version: 0.0.1
+
+environment:
+  sdk: ">=2.18.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2
+  file_picker: ^8.1.2
+  http: ^1.2.2
+  path: ^1.9.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

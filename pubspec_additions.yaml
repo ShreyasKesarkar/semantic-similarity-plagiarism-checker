@@ -1,0 +1,11 @@
+# Add these under `dependencies:` in your existing pubspec.yaml
+# (keep your current flutter, cupertino_icons etc. — just add these three)
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2
+  file_picker: ^8.1.2
+  http: ^1.2.2
+
+# Then run: flutter pub get
