@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 
+import '../models/picked_file.dart';
 import '../models/similarity_result_model.dart';
 import '../repositories/plagiarism_repository.dart';
 
@@ -10,27 +9,27 @@ enum CheckStatus { idle, uploading, analyzing, success, error }
 /// Holds the state for the whole "compare two documents" flow:
 /// file selection -> analysis -> result.
 ///
-/// Screens call methods here; they never talk to the repository directly.
+/// Uses [PickedFile] instead of dart:io File to work on both web and native.
 class PlagiarismCheckProvider extends ChangeNotifier {
   final PlagiarismRepository _repository;
 
   PlagiarismCheckProvider({required PlagiarismRepository repository})
       : _repository = repository;
 
-  File? documentA;
-  File? documentB;
+  PickedFile? documentA;
+  PickedFile? documentB;
   CheckStatus status = CheckStatus.idle;
   SimilarityResultModel? result;
   String? errorMessage;
 
   bool get canRunCheck => documentA != null && documentB != null;
 
-  void setDocumentA(File file) {
+  void setDocumentA(PickedFile file) {
     documentA = file;
     notifyListeners();
   }
 
-  void setDocumentB(File file) {
+  void setDocumentB(PickedFile file) {
     documentB = file;
     notifyListeners();
   }
@@ -43,7 +42,7 @@ class PlagiarismCheckProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      result = await _repository.compareDocuments(
+      result = await _repository.compareDocumentsFromPicked(
         documentA: documentA!,
         documentB: documentB!,
       );

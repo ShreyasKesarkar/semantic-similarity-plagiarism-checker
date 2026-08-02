@@ -1,7 +1,7 @@
 /// Risk classification based on overall similarity score.
 /// Matches the Risk Assessment Engine thresholds from the architecture doc:
-/// 0–30% Low, 30–60% Medium, 60–100% High (thresholds are adjustable).
-enum RiskLevel { low, medium, high }
+/// 0–25% Low, 26–50% Medium, 51–75% High, 76-100% Very High
+enum RiskLevel { low, medium, high, veryHigh }
 
 extension RiskLevelX on RiskLevel {
   String get label {
@@ -12,6 +12,8 @@ extension RiskLevelX on RiskLevel {
         return 'Medium Risk';
       case RiskLevel.high:
         return 'High Risk';
+      case RiskLevel.veryHigh:
+        return 'Very High Risk';
     }
   }
 }

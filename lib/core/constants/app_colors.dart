@@ -13,7 +13,8 @@ class AppColors {
 
   static const riskLow = Color(0xFF16A34A);
   static const riskMedium = Color(0xFFD97706);
-  static const riskHigh = Color(0xFFDC2626);
+  static const riskHigh = Color(0xFFEA580C);
+  static const riskVeryHigh = Color(0xFFDC2626);
 
   static Color forRisk(RiskLevel level) {
     switch (level) {
@@ -23,6 +24,8 @@ class AppColors {
         return riskMedium;
       case RiskLevel.high:
         return riskHigh;
+      case RiskLevel.veryHigh:
+        return riskVeryHigh;
     }
   }
 }

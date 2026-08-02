@@ -1,7 +1,7 @@
-import 'dart:io';
 import 'dart:math';
 
 import '../models/matched_sentence_pair.dart';
+import '../models/picked_file.dart';
 import '../models/risk_level.dart';
 import '../models/similarity_result_model.dart';
 import 'plagiarism_repository.dart';
@@ -11,19 +11,19 @@ import 'plagiarism_repository.dart';
 /// screen (loading -> results -> report) can be built and demoed today.
 class MockPlagiarismRepository implements PlagiarismRepository {
   @override
-  Future<SimilarityResultModel> compareDocuments({
-    required File documentA,
-    required File documentB,
+  Future<SimilarityResultModel> compareDocumentsFromPicked({
+    required PickedFile documentA,
+    required PickedFile documentB,
   }) async {
     // Simulate processing time (text extraction + SBERT embedding + cosine sim).
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 4));
 
     const overallSimilarity = 87.0;
 
     return SimilarityResultModel(
       id: 'mock-${Random().nextInt(99999)}',
-      documentAName: documentA.path.split('/').last,
-      documentBName: documentB.path.split('/').last,
+      documentAName: documentA.name,
+      documentBName: documentB.name,
       overallSimilarityPercent: overallSimilarity,
       riskLevel: _riskFromPercent(overallSimilarity),
       matchedSections: [
@@ -64,8 +64,9 @@ class MockPlagiarismRepository implements PlagiarismRepository {
   }
 
   RiskLevel _riskFromPercent(double percent) {
-    if (percent < 30) return RiskLevel.low;
-    if (percent < 60) return RiskLevel.medium;
-    return RiskLevel.high;
+    if (percent <= 25) return RiskLevel.low;
+    if (percent <= 50) return RiskLevel.medium;
+    if (percent <= 75) return RiskLevel.high;
+    return RiskLevel.veryHigh;
   }
 }

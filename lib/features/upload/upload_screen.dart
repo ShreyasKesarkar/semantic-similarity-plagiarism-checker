@@ -1,13 +1,12 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:path/path.dart' as p;
 
 import '../../core/constants/app_colors.dart';
+import '../../data/models/picked_file.dart';
 import '../../data/providers/plagiarism_check_provider.dart';
-import '../results/results_screen.dart';
+import 'analysis_progress_screen.dart';
 
 /// MVP upload screen: teacher selects Document A and Document B,
 /// then runs the check. Wired to PlagiarismCheckProvider, which currently
@@ -20,16 +19,26 @@ class UploadScreen extends StatelessWidget {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'docx'],
+      withData: true, // ensures bytes are loaded on web
     );
-    if (result == null || result.files.single.path == null) return;
+    if (result == null || result.files.isEmpty) return;
 
-    final file = File(result.files.single.path!);
+    final picked = result.files.single;
+    final pickedFile = PickedFile(
+      name: picked.name,
+      path: kIsWeb ? null : picked.path, // NEVER access .path on web — it throws
+      bytes: picked.bytes,               // non-null on web after withData: true
+    );
+
+    if (!pickedFile.isValid) return;
+
     if (isDocumentA) {
-      provider.setDocumentA(file);
+      provider.setDocumentA(pickedFile);
     } else {
-      provider.setDocumentB(file);
+      provider.setDocumentB(pickedFile);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,26 +96,15 @@ class UploadScreen extends StatelessWidget {
                   ),
                 ElevatedButton(
                   onPressed: provider.canRunCheck && !isAnalyzing
-                      ? () async {
-                          await provider.runCheck();
-                          if (context.mounted &&
-                              provider.status == CheckStatus.success) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const ResultsScreen(),
-                              ),
-                            );
-                          }
+                      ? () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const AnalysisProgressScreen(),
+                            ),
+                          );
                         }
                       : null,
-                  child: isAnalyzing
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Text('Run Plagiarism Check'),
+                  child: const Text('Run Plagiarism Check'),
                 ),
               ],
             ),
@@ -119,7 +117,7 @@ class UploadScreen extends StatelessWidget {
 
 class _DocumentTile extends StatelessWidget {
   final String label;
-  final File? file;
+  final PickedFile? file;
   final VoidCallback onTap;
 
   const _DocumentTile({
@@ -130,7 +128,7 @@ class _DocumentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = file == null ? null : p.basename(file!.path);
+    final displayName = file?.name;
 
     return InkWell(
       onTap: onTap,
@@ -178,3 +176,4 @@ class _DocumentTile extends StatelessWidget {
     );
   }
 }
+

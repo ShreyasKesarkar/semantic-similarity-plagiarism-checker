@@ -33,8 +33,14 @@ class SimilarityResultModel {
       overallSimilarityPercent:
           (json['overall_similarity_percent'] as num).toDouble(),
       riskLevel: RiskLevel.values.firstWhere(
-        (e) => e.name == json['risk_level'],
-        orElse: () => RiskLevel.low,
+        (e) => e.name == json['risk_level'] || (e == RiskLevel.veryHigh && json['risk_level'] == 'very_high'),
+        orElse: () {
+          final percent = (json['overall_similarity_percent'] as num).toDouble();
+          if (percent <= 25) return RiskLevel.low;
+          if (percent <= 50) return RiskLevel.medium;
+          if (percent <= 75) return RiskLevel.high;
+          return RiskLevel.veryHigh;
+        },
       ),
       matchedSections: (json['matched_sections'] as List<dynamic>)
           .map((e) => MatchedSentencePair.fromJson(e as Map<String, dynamic>))
